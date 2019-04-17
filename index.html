@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<!-- Use the HTML and CSS you developed in module 01 to fill out this template.-->
+
+<head>
+  <meta charset=utf-8 />
+  <title>Holy Cities Map</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel='icon' href='https://newmapsplus.github.io/favicon.ico' type='image/x-icon' />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.css">
+  <link href="https://fonts.googleapis.com/css?family=Merienda|Philosopher" rel="stylesheet">
+
+  <style>
+    /* Add custom styles. */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #e3e3e6;
+      font-weight: 300;
+      color: #3d3d3d;
+      font-size: 100%;
+    }
+
+    header,
+    section,
+    footer {
+      width: 80%;
+      margin: 10px auto;
+    }
+
+    h1 {
+      font-family: 'Merienda', cursive;
+      font-size: 2.5em;
+      font-weight: 900i;
+      letter-spacing: .04em;
+    }
+
+    h2 {
+      font-family: 'Philosopher', sans-serif;
+      font-size: 2em;
+      font-weight: 300;
+      font: 'Oswald';
+      letter-spacing: .04em;
+    }
+
+    p {
+      font-family: 'Philosopher', sans-serif;
+      font-size: 1.1em;
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #358584;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul {
+      font-family: 'Philosopher', sans-serif;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: 0;
+      height: 1px;
+      background: #d3d3d3;
+    }
+
+    .caption {
+      font-family: 'Philosopher', sans-serif;
+      margin: 0 0 20px 0;
+      display: block;
+    }
+
+    #map {
+      width: 100%;
+      height: 540px;
+      margin: 10px auto;
+      border: 2px solid #d3d3d3;
+    }
+
+    .highlight {
+      color: #B2B035;
+      font-weight: bold;
+    }
+
+    .img-fill {
+      width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+
+    /* Use float property to make two-column layout */
+    .first-column {
+      float: left;
+      width: 49%;
+      padding-right: 2%;
+    }
+
+    .second-column {
+      float: left;
+      width: 49%;
+    }
+
+    /* Clear floats after columns */
+    .row::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <!-- Add header information -->
+    <h1>Three Holy Cities</h1>
+  </header>
+  <section>
+    <!-- Add map and body content -->
+    <div id="map"></div>
+    <div class="row">
+      <div class="first-column">
+        <h2>The Holy Sanctuaries of Islam</h2>
+        <p> There are three sites in the world venerated as holy places by Muslims. The Haram Mosque of Mecca, Masjid an-Nabi in Madinah, and Jerusalem's Masjid al-Aqsa.</p>
+
+        <ul>
+          <li>Map made by Osama Abdl-Haleem for the University of Kentucky Geography Department.</li>
+          <li>Basemap provided by <a href="https://leafletjs.com/">Leaflet</a>.</li>
+          <li>See my projects on GitHub: <a href="https://github.com/newmapsplus">New Maps Plus</a></li>
+          <li>Visit my <a href='#'>mapping portfolio</a>.</li>
+        </ul>
+      </div>
+
+      <div class="second-column">
+        <img src="holySitesOfIslam.jpg" alt="Holy Sites of Islam" class="img-fill">
+        <div class="caption">
+          The Great Mosques in Mecca, Madinah, and Jerusalem.
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <!-- Add footer information -->
+    <hr>
+    <a href="https://newmapsplus.github.io">
+      <img src="https://newmapsplus.github.io/assets/graphics/logo-2018-nmp-75px-h-gray.png" alt="University of Kentucky New Maps Plus">
+    </a>
+
+    <a href="https://uky-gis.github.io">
+      <img src="https://newmapsplus.github.io/assets/graphics/logo-2018-geography-75px-h.png" alt="University of Kentucky Department of Geography">
+    </a>
+  </footer>
+
+  <!-- Add link to Leaflet JavaScript library. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.js"></script>
+
+  <!-- Starter Javascript -->
+  <script>
+    // Map options control initial location and zoom level.
+    var options = {
+      center: [26.9766, 38.7472],
+      zoom: 5
+    }
+
+    // Create Leaflet map with above options.
+    var map = L.map('map', options);
+
+    // Get basemap URL from Leaflet Providers
+    var basemap_url = 'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}'
+
+    // Get basemap attributes from Leaflet Providers
+    var basemap_attributes = {
+      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      subdomains: 'abcd',
+      minZoom: 1,
+      maxZoom: 16,
+      ext: 'png'
+    }
+
+    // Add tileset as a layer in our map.
+    var tiles = L.tileLayer(basemap_url, basemap_attributes).addTo(map);
+
+    // ************************************************** //
+
+    // STORING DATA AS VARIABLES IN ARRAYS
+
+    // variables referencing data values
+    var city1Name = "Mecca",
+      city1Coords = [21.3891, 39.8579],
+      city1Pop = "1,535,000",
+      city1Capital = false,
+      city1State = "Saudi Arabia";
+
+    var city2Name = "Madinah",
+      city2Coords = [24.5247, 39.5692],
+      city2Pop = "1,100,000",
+      city2Capital = false,
+      city2State = "Saudi Arabia";
+
+    var city3Name = "Jerusalem",
+      city3Coords = [31.7683, 35.2137],
+      city3Pop = "857,752",
+      city3Capital = true,
+      city3State = "Palestine";
+
+    // arrays of data
+    var cities = [city1Name, city2Name, city3Name],
+      coords = [city1Coords, city2Coords, city3Coords],
+      populations = [city1Pop, city2Pop, city3Pop],
+      capitals = [city1Capital, city2Capital, city3Capital],
+      states = [city1State, city2State, city3State];
+
+    // ADDING Mecca MARKER TO MAP
+
+    // creating a string of the Popup content
+    var city1Popup = "<b>" + cities[0] + "</b>" +
+      "<br><b>Population</b>: " + populations[0];
+
+    // if city is a capital city
+    if (capitals[0] == true) {
+      // concatenate a string to the existing string value
+      city1Popup += "<br>Capital of " + states[0];
+    }
+
+    // create the Leaflet marker using the coordinates
+    L.marker(coords[0])
+      .addTo(map) // add it to the map
+      .bindPopup(city1Popup); // bind the Popup
+
+    // ADDING Madinah MARKER TO MAP
+
+    // creating a string of the Popup content
+    var city1Popup = "<b>" + cities[1] + "</b>" +
+      "<br><b>Population</b>: " + populations[1];
+
+    // if city is a capital city
+    if (capitals[1] == true) {
+      // concatenate a string to the existing string value
+      city1Popup += "<br>Capital of " + states[1];
+    }
+
+    // create the Leaflet marker using the coordinates
+    L.marker(coords[1])
+      .addTo(map) // add it to the map
+      .bindPopup(city1Popup); // bind the Popup
+
+    // ADDING Jerusalem MARKER TO MAP
+
+    // creating a string of the Popup content
+    var city1Popup = "<b>" + cities[2] + "</b>" +
+      "<br><b>Population</b>: " + populations[2];
+
+    // if city is a capital city
+    if (capitals[2] == true) {
+      // concatenate a string to the existing string value
+      city1Popup += "<br>Capital of " + states[2];
+    }
+
+    // create the Leaflet marker using the coordinates
+    L.marker(coords[2])
+      .addTo(map) // add it to the map
+      .bindPopup(city1Popup); // bind the Popup
+  </script>
+
+</body>
+
+</html>
